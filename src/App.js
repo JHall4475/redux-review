@@ -1,28 +1,45 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
+import { connect } from 'react-redux';
+import { addNewItem, deleteItem } from './redux/action';
 import './App.css';
 
+
 class App extends Component {
+  state = {
+    userInput: ''
+  }
+
+  onUserInputChange = (e) => {
+    this.setState({userInput: e.target.value})
+  } 
+
+  addToList = () => {
+    this.props.addNewItem(this.state.userInput)
+  }
+
   render() {
+    const list = this.props.list.map((item, index) => {
+      return <div key={index}>
+        <h1 >{item}</h1>
+        <button onClick={() => this.props.deleteItem(index)}>Delete</button>
+      </div>
+    })
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+        <h1>Todo List</h1>
+        <input value={this.state.userInput} onChange={this.onUserInputChange}/>
+        <button onClick={this.addToList}>Add</button>
+        <br />
+        {list}
       </div>
     );
   }
 }
 
-export default App;
+const mapStateToProps = (state) => {
+  return {
+    list: state.list
+  }
+}
+
+export default connect(mapStateToProps, {addNewItem, deleteItem})(App);
